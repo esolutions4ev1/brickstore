@@ -9,6 +9,44 @@
 > [!CAUTION]
 > # Please see https://www.brickstore.dev for more information on downloads and usage.
 
+## About this fork
+
+This is a personal fork of [rgriebl/brickstore](https://github.com/rgriebl/brickstore) that adds
+a **Location** column for tracking the physical storage location of each lot (bin, drawer, shelf,
+box, ...). It replaces an earlier out-of-tree hack ("Lot sidecar") that kept locations outside the
+document and showed them in a popup — the field is now a first-class column, directly in the
+document view.
+
+### The Location column
+
+* Behaves exactly like *Remarks* and *Comments*: shown as a regular column in the document view,
+  editable in place (double-click), sortable, filterable, and wraps to two lines.
+* Supported by *Consolidate Items*: locations can be copied or text-merged when merging lots
+  (see the field list in the merge-mode dialog).
+* Available to print scripts and extensions via the QML API as `lot.location`.
+* Saved in `.bsx` files as an optional `<Location>` element inside each `<Item>`.
+
+### Compatibility
+
+* **BrickStore-local only.** BrickLink has no such field in its API, XML formats, or Mass-Update
+  mechanism, so locations are never uploaded to or downloaded from BrickLink. Location changes are
+  deliberately excluded from the difference-mode tracking for the same reason.
+* `.bsx` files written by this fork still open fine in the official BrickStore — unknown elements
+  are skipped on load. Note that the official build silently drops the location data if it
+  re-saves the file, so keep documents with locations in this fork.
+* The internal lot serialization (clipboard/undo) was bumped from version 5 to 6; version-5 data
+  from the official build is still read.
+
+### Fork layout and syncing with upstream
+
+* Branch `lot-location` carries all fork changes; `main` mirrors upstream and stays untouched.
+* To pull in upstream changes: `git fetch origin && git merge origin/main` while on
+  `lot-location` (the diff is small and localized, conflicts should be rare).
+* All fork changes are marked with `fork extension` comments in the source. Touched files:
+  `src/bricklink/lot.h/.cpp`, `src/bricklink/qmlapi.h`, `src/common/documentmodel.h/.cpp`,
+  `src/common/documentio.cpp`, `src/common/document.cpp`, `src/desktop/documentdelegate.cpp`,
+  `src/desktop/selectmergemode.cpp`.
+
 ## BrickStore
 
 BrickStore is a BrickLink offline management tool. It is **multi-platform** (Windows, macOS and Linux as well as iOS and Android), **multilingual** (currently English, German, Spanish, Swedish and French), **fast** and **stable**.

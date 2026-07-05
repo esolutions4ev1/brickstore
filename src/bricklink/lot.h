@@ -69,6 +69,8 @@ public:
     void setComments(const QString &n) { m_comments = n; }
     QString remarks() const            { return m_remarks; }
     void setRemarks(const QString &r)  { m_remarks = r; }
+    QString location() const           { return m_location; }
+    void setLocation(const QString &l) { m_location = l; }
 
     int quantity() const               { return m_quantity; }
     void setQuantity(int q)            { m_quantity = q; }
@@ -163,6 +165,7 @@ private:
 
     QString m_comments;
     QString m_remarks;
+    QString m_location;  // fork extension: storage location, BrickStore-local
 
     int     m_quantity = 0;
     int     m_bulk_quantity = 1;

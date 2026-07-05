@@ -107,6 +107,7 @@ QSize DocumentDelegate::sizeHint(const QStyleOptionViewItem &option1, const QMod
         DocumentModel::Description,
         DocumentModel::Remarks,
         DocumentModel::Comments,
+        DocumentModel::Location,
         DocumentModel::AlternateIds,
     };
 
@@ -496,6 +497,7 @@ void DocumentDelegate::paint(QPainter *p, const QStyleOptionViewItem &option, co
         DocumentModel::Condition,
         DocumentModel::Comments,
         DocumentModel::Remarks,
+        DocumentModel::Location,
         DocumentModel::Category,
         DocumentModel::ItemType,
         DocumentModel::Reserved,

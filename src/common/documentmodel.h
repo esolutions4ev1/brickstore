@@ -121,6 +121,7 @@ public:
         DateLastSold,
         Weight,
         AlternateIds,
+        Location,  // fork extension: storage location, BrickStore-local
 
         FieldCount
     };

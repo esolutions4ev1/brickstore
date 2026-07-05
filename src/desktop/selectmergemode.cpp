@@ -154,6 +154,7 @@ void SelectMergeMode::createFields()
     { QT_TR_NOOP("Sale percentage"), { DocumentModel::Sale } },
     { QT_TR_NOOP("Comment"),         { DocumentModel::Comments } },
     { QT_TR_NOOP("Remark"),          { DocumentModel::Remarks } },
+    { QT_TR_NOOP("Location"),        { DocumentModel::Location } },
     { QT_TR_NOOP("Reserved"),        { DocumentModel::Reserved } },
     { QT_TR_NOOP("Retain flag"),     { DocumentModel::Retain } },
     { QT_TR_NOOP("Stockroom"),       { DocumentModel::Stockroom } },

@@ -931,6 +931,7 @@ DocumentModel::MergeModes DocumentModel::possibleMergeModesForField(Field field)
         { Sale,      MergeMode::Copy | MergeMode::Merge },
         { Comments,  MergeMode::Copy | MergeMode::Merge | MergeMode::MergeText },
         { Remarks,   MergeMode::Copy | MergeMode::Merge | MergeMode::MergeText },
+        { Location,  MergeMode::Copy | MergeMode::Merge | MergeMode::MergeText },
         { Reserved,  MergeMode::Copy | MergeMode::Merge },
         { Retain,    MergeMode::Copy },
         { Stockroom, MergeMode::Copy },
@@ -1007,6 +1008,8 @@ bool DocumentModel::mergeLotFields(const Lot &from, Lot &to, const FieldMergeMod
     if (FieldOp<&Lot::comments, &Lot::setComments>::merge(from, to, mergeModeFor(Comments)))
         changed = true;
     if (FieldOp<&Lot::remarks, &Lot::setRemarks>::merge(from, to, mergeModeFor(Remarks)))
+        changed = true;
+    if (FieldOp<&Lot::location, &Lot::setLocation>::merge(from, to, mergeModeFor(Location)))
         changed = true;
     if (FieldOp<&Lot::reserved, &Lot::setReserved>::merge(from, to, mergeModeFor(Reserved)))
         changed = true;
@@ -1479,7 +1482,8 @@ void DocumentModel::updateLotFlags(const Lot *lot)
                 | (1ULL << YearReleased)
                 | (1ULL << Marker)
                 | (1ULL << DateAdded)
-                | (1ULL << DateLastSold);
+                | (1ULL << DateLastSold)
+                | (1ULL << Location);  // BrickStore-local, cannot be synced to BrickLink
 
         for (Field f = Index; f != FieldCount; f = Field(f + 1)) {
             quint64 fmask = (1ULL << f);
@@ -2050,6 +2054,11 @@ void DocumentModel::initializeColumns()
           .title = QT_TR_NOOP("Remarks"),
           .dataFn = [](const Lot *lot) { return lot->remarks(); },
           .setDataFn = [](Lot *lot, const QVariant &v) { lot->setRemarks(v.toString()); },
+      });
+    C(Location, Column {
+          .title = QT_TR_NOOP("Location"),
+          .dataFn = [](const Lot *lot) { return lot->location(); },
+          .setDataFn = [](Lot *lot, const QVariant &v) { lot->setLocation(v.toString()); },
       });
     C(QuantityOrig, Column {
                         .type = Column::Type::Integer,

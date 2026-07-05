@@ -2128,6 +2128,7 @@ QVector<ColumnData> Document::defaultColumnLayout(bool simpleMode)
         DocumentModel::Marker,
         DocumentModel::Comments,
         DocumentModel::Remarks,
+        DocumentModel::Location,
         DocumentModel::Category,
         DocumentModel::ItemType,
         DocumentModel::TierQ1,

@@ -381,6 +381,7 @@ class QmlLot : public QmlWrapperBase<Lot>
 
     Q_PROPERTY(QString comments READ comments WRITE setComments)
     Q_PROPERTY(QString remarks READ remarks WRITE setRemarks)
+    Q_PROPERTY(QString location READ location WRITE setLocation)
 
     Q_PROPERTY(int quantity READ quantity WRITE setQuantity)
     Q_PROPERTY(int bulkQuantity READ bulkQuantity WRITE setBulkQuantity)
@@ -454,6 +455,8 @@ public:
     void setComments(const QString &n) { set().to()->setComments(n); }
     QString remarks() const            { return get()->remarks(); }
     void setRemarks(const QString &r)  { set().to()->setRemarks(r); }
+    QString location() const           { return get()->location(); }
+    void setLocation(const QString &l) { set().to()->setLocation(l); }
 
     int quantity() const               { return get()->quantity(); }
     void setQuantity(int q)            { set().to()->setQuantity(q); }

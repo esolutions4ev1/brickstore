@@ -473,6 +473,7 @@ Document *DocumentIO::parseBsxInventory(QFile *in)
             { u"Sale",         [](auto *lot, auto &v) { lot->setSale(v.toInt()); } },
             { u"Comments",     [](auto *lot, auto &v) { lot->setComments(v); } },
             { u"Remarks",      [](auto *lot, auto &v) { lot->setRemarks(v); } },
+            { u"Location",     [](auto *lot, auto &v) { lot->setLocation(v); } },
             { u"TQ1",          [](auto *lot, auto &v) { lot->setTierQuantity(0, v.toInt()); } },
             { u"TQ2",          [](auto *lot, auto &v) { lot->setTierQuantity(1, v.toInt()); } },
             { u"TQ3",          [](auto *lot, auto &v) { lot->setTierQuantity(2, v.toInt()); } },
@@ -781,6 +782,7 @@ bool DocumentIO::createBsxInventory(QIODevice *out, const Document *doc)
         create(u"Cost",      &Lot::cost,          asCurrency, Optional, 0);
         create(u"Comments",  &Lot::comments,      asString,   Optional, QString());
         create(u"Remarks",   &Lot::remarks,       asString,   Optional, QString());
+        create(u"Location",  &Lot::location,      asString,   Optional, QString());
         create(u"Reserved",  &Lot::reserved,      asString,   Optional, QString());
         create(u"LotID",     &Lot::lotId,         asInt,      Optional, 0);
         create(u"TQ1",       &Lot::tierQuantity0, asInt,      Optional, 0);

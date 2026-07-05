@@ -43,6 +43,7 @@ Lot &Lot::operator=(const Lot &copy)
     m_reserved            = copy.m_reserved;
     m_comments            = copy.m_comments;
     m_remarks             = copy.m_remarks;
+    m_location            = copy.m_location;
     m_quantity            = copy.m_quantity;
     m_bulk_quantity       = copy.m_bulk_quantity;
     m_tier_quantity[0]    = copy.m_tier_quantity[0];
@@ -93,6 +94,7 @@ bool Lot::operator==(const Lot &cmp) const
             && (m_reserved         == cmp.m_reserved)
             && (m_comments         == cmp.m_comments)
             && (m_remarks          == cmp.m_remarks)
+            && (m_location         == cmp.m_location)
             && (m_quantity         == cmp.m_quantity)
             && (m_bulk_quantity    == cmp.m_bulk_quantity)
             && (m_tier_quantity[0] == cmp.m_tier_quantity[0])
@@ -113,7 +115,8 @@ bool Lot::operator==(const Lot &cmp) const
 
 void Lot::save(QDataStream &ds) const
 {
-    ds << QByteArray("II") << qint32(5)
+    // version 6 == version 5 plus m_location appended (fork extension)
+    ds << QByteArray("II") << qint32(6)
        << itemId()
        << (itemType() ? itemType()->id() : ItemType::InvalidId)
        << (color() ? color()->id() : Color::InvalidId)
@@ -125,7 +128,8 @@ void Lot::save(QDataStream &ds) const
        << m_tier_price[0] << m_tier_price[1] << m_tier_price[2]
        << m_weight
        << m_markerText << m_markerColor
-       << m_dateAdded << m_dateLastSold;
+       << m_dateAdded << m_dateLastSold
+       << m_location;
 }
 
 Lot *Lot::restore(QDataStream &ds, uint startChangelogAt)
@@ -135,7 +139,7 @@ Lot *Lot::restore(QDataStream &ds, uint startChangelogAt)
     QByteArray tag;
     qint32 version { };
     ds >> tag >> version;
-    if ((ds.status() != QDataStream::Ok) || (tag != "II") || (version != 5))
+    if ((ds.status() != QDataStream::Ok) || (tag != "II") || (version < 5) || (version > 6))
         return nullptr;
 
     QByteArray itemId;
@@ -185,6 +189,9 @@ Lot *Lot::restore(QDataStream &ds, uint startChangelogAt)
         >> lot->m_tier_price[0] >> lot->m_tier_price[1] >> lot->m_tier_price[2]
         >> lot->m_weight >> lot->m_markerText >> lot->m_markerColor
         >> lot->m_dateAdded >> lot->m_dateLastSold;
+
+    if (version >= 6)
+        ds >> lot->m_location;
 
     if (ds.status() != QDataStream::Ok)
         return nullptr;
