@@ -26,6 +26,15 @@ document view.
 * Available to print scripts and extensions via the QML API as `lot.location`.
 * Saved in `.bsx` files as an optional `<Location>` element inside each `<Item>`.
 
+### The `--no-3d` switch
+
+* Starting with `BrickStore.exe --no-3d` (or with the environment variable `BRICKSTORE_NO_3D=1`
+  set) disables the embedded 3D part renderer completely: the Qt Quick 3D scene, its GPU context
+  and shaders are never created, and the item image dock shows 2D pictures only.
+* Useful on machines with problematic GPU drivers, where the 3D view causes long startup delays
+  and lag while resizing the window — the 3D `QQuickWidget` re-renders on the GUI thread on
+  every resize step, even when the 2D view is selected.
+
 ### Compatibility
 
 * **BrickStore-local only.** BrickLink has no such field in its API, XML formats, or Mass-Update
@@ -45,7 +54,8 @@ document view.
 * All fork changes are marked with `fork extension` comments in the source. Touched files:
   `src/bricklink/lot.h/.cpp`, `src/bricklink/qmlapi.h`, `src/common/documentmodel.h/.cpp`,
   `src/common/documentio.cpp`, `src/common/document.cpp`, `src/desktop/documentdelegate.cpp`,
-  `src/desktop/selectmergemode.cpp`.
+  `src/desktop/selectmergemode.cpp` (Location column); `src/desktop/desktopapplication.cpp`,
+  `src/ldraw/renderwidget.cpp` (`--no-3d` switch).
 
 ## BrickStore
 

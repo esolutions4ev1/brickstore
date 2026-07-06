@@ -18,6 +18,10 @@ namespace LDraw {
 
 bool RenderWidget::isGPUSupported()
 {
+    // fork extension: --no-3d (or BRICKSTORE_NO_3D=1) disables the 3D renderer completely
+    if (qEnvironmentVariableIntValue("BRICKSTORE_NO_3D") != 0)
+        return false;
+
     static std::optional<bool> blacklisted;
 
     if (!blacklisted.has_value()) {
@@ -52,25 +56,29 @@ RenderWidget::RenderWidget(QQmlEngine *engine, QWidget *parent)
     auto layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    m_widget = engine ? std::make_unique<QQuickWidget>(engine, this)
-                      : std::make_unique<QQuickWidget>(this);
-
+    // fork extension: do not even instantiate the QQuickWidget (and with it the whole GPU
+    // rendering stack) if 3D is unsupported or disabled
     if (isGPUSupported()) {
+        m_widget = engine ? std::make_unique<QQuickWidget>(engine, this)
+                          : std::make_unique<QQuickWidget>(this);
+
         QSurfaceFormat fmt = QQuick3D::idealSurfaceFormat();
         m_widget->setFormat(fmt);
         m_widget->setResizeMode(QQuickWidget::SizeRootObjectToView);
         m_widget->setSource(QUrl(u"qrc:/LDraw/PartRenderer.qml"_qs));
     }
 
-    if (auto *ro = m_widget->rootObject())
+    if (auto *ro = m_widget ? m_widget->rootObject() : nullptr)
         m_controller = ro->property("renderController").value<RenderController *>();
     else
         m_controller = new RenderController(this);
 
     paletteChange();
 
-    m_widget->setMinimumSize(100, 100);
-    m_widget->setFocusPolicy(Qt::NoFocus);
+    if (m_widget) {
+        m_widget->setMinimumSize(100, 100);
+        m_widget->setFocusPolicy(Qt::NoFocus);
+    }
 
     connect(m_controller, &RenderController::canRenderChanged,
             this, &RenderWidget::canRenderChanged);
@@ -87,7 +95,8 @@ RenderWidget::RenderWidget(QQmlEngine *engine, QWidget *parent)
         QCoreApplication::postEvent(this, he);
     });
 
-    layout->addWidget(m_widget.get(), 10);
+    if (m_widget) // fork extension
+        layout->addWidget(m_widget.get(), 10);
     languageChange();
 }
 
@@ -123,7 +132,7 @@ void RenderWidget::setAnimationActive(bool active)
 
 bool RenderWidget::startGrab()
 {
-    if (m_widget->rootObject() && !m_grabResult) {
+    if (m_widget && m_widget->rootObject() && !m_grabResult) { // fork extension: m_widget can be null
         m_grabResult = m_widget->rootObject()->grabToImage();
         if (m_grabResult) {
             connect(m_grabResult.get(), &QQuickItemGrabResult::ready,
@@ -168,7 +177,7 @@ void RenderWidget::paletteChange()
 
 void RenderWidget::languageChange()
 {
-    if (m_widget->rootObject())
+    if (m_widget && m_widget->rootObject()) // fork extension: m_widget can be null
         setToolTip(tr("Hold left button: Rotate\nHold right button: Move\nMouse wheel: Zoom\nDouble click: Reset camera\nRight click: Menu"));
 }
 

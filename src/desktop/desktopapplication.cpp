@@ -78,8 +78,13 @@ DesktopApplication::DesktopApplication(int &argc, char **argv)
     m_clp.addOption({ { u"v"_qs, u"version"_qs }, u"Display version information."_qs });
     m_clp.addOption({ u"load-translation"_qs, u"Load the specified translation (testing only)."_qs, u"qm-file"_qs });
     m_clp.addOption({ u"new-instance"_qs, u"Start a new instance."_qs });
+    m_clp.addOption({ u"no-3d"_qs, u"Disable the 3D part renderer."_qs }); // fork extension
     m_clp.addPositionalArgument(u"files"_qs, u"The BSX documents to open, optionally."_qs, u"[files...]"_qs);
     m_clp.process(QCoreApplication::arguments());
+
+    // fork extension: evaluated in LDraw::RenderWidget::isGPUSupported()
+    if (m_clp.isSet(u"no-3d"_qs))
+        qputenv("BRICKSTORE_NO_3D", "1");
 
     m_translationOverride = m_clp.value(u"load-translation"_qs);
     const auto documents = m_clp.positionalArguments();
