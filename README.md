@@ -48,9 +48,9 @@ document view.
 
 ### Fork layout and syncing with upstream
 
-* Branch `lot-location` carries all fork changes; `main` mirrors upstream and stays untouched.
+* Branch `fork` carries all fork changes; `main` mirrors upstream and stays untouched.
 * To pull in upstream changes: `git fetch origin && git merge origin/main` while on
-  `lot-location` (the diff is small and localized, conflicts should be rare).
+  `fork` (the diff is small and localized, conflicts should be rare).
 * All fork changes are marked with `fork extension` comments in the source. Touched files:
   `src/bricklink/lot.h/.cpp`, `src/bricklink/qmlapi.h`, `src/common/documentmodel.h/.cpp`,
   `src/common/documentio.cpp`, `src/common/document.cpp`, `src/desktop/documentdelegate.cpp`,
