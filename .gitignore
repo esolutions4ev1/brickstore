@@ -37,3 +37,6 @@ build/
 builds/
 CMakeUserPresets.json
 compile_commands.json
+
+# IDE
+.vscode/
